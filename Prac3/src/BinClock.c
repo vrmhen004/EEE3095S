@@ -80,12 +80,16 @@ int main(void){
 		
 		//Function calls to toggle LEDs
 		//Write your logic here
+		for(int i = 0; i<60; i++){
+			delay(100);
+			lightMins(i);
+		}
 		
 		// Print out the time we have stored on our RTC
 		printf("The current time is: %x:%x:%x\n", hours, mins, secs);
 
 		//using a delay to make our program "less CPU hungry"
-		delay(1); //milliseconds
+		delay(1000); //milliseconds
 	}
 	return 0;
 }
@@ -109,85 +113,9 @@ int hFormat(int hours){
  */
 void lightHours(int units){
 	// Write your logic to light up the hour LEDs here
-	switch(units){
-		case 0:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
-		case 1:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 1); // (1's)
-		break;
-		case 2:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 1); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
-		case 3:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 1); // (2's)
-			 digitalWrite(37, 1); // (1's)
-		break;
-		case 4:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 1); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
-		case 5:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 1); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 1); // (1's)
-		break;
-		case 6:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 1); // (4's)
-			 digitalWrite(36, 1); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
-		case 7:
-			 digitalWrite(40, 0); // (8's)
-			 digitalWrite(38, 1); // (4's)
-			 digitalWrite(36, 1); // (2's)
-			 digitalWrite(37, 1); // (1's)
-		break;
-		case 8:
-			 digitalWrite(40, 1); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
-		case 9:
-			 digitalWrite(40, 1); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 1); // (1's)
-		break;
-		case 10:
-			 digitalWrite(40, 1); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 1); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
-		case 11:
-			 digitalWrite(40, 1); // (8's)
-			 digitalWrite(38, 0); // (4's)
-			 digitalWrite(36, 1); // (2's)
-			 digitalWrite(37, 1); // (1's)
-		break;
-		case 12:
-			 digitalWrite(40, 1); // (8's)
-			 digitalWrite(38, 1); // (4's)
-			 digitalWrite(36, 0); // (2's)
-			 digitalWrite(37, 0); // (1's)
-		break;
+	for(int i = 3; i>-1; i--){
+		digitalWrite(LEDS[i], units%2);
+		units /= 2;
 	}
 }
 
@@ -196,6 +124,10 @@ void lightHours(int units){
  */
 void lightMins(int units){
 	//Write your logic to light up the minute LEDs here
+	for(int i = 5; i>-1; i--){
+		digitalWrite(LEDS[i+4], units%2);
+		units /= 2;
+	}
 }
 
 /*
