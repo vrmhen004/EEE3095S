@@ -4,7 +4,7 @@
  * Modified for EEE3095S/3096S by Keegan Crankshaw
  * August 2019
  * 
- * VRMHEN004 <STUDNUM_2>
+ * VRMHEN004 DPLKYL002
  * Date
 */
 
