@@ -10,6 +10,7 @@
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
+#include <softPwm.h>
 #include <stdio.h> //For printf functions
 #include <stdlib.h> // For system functions
 
@@ -41,6 +42,7 @@ void initGPIO(void){
 	
 	//Set Up the Seconds LED for PWM
 	//Write your logic here
+	softPwmCreate(SECS, 0, 100);
 	
 	printf("LEDS done\n");
 	
