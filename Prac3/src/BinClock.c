@@ -78,6 +78,7 @@ int main(void){
 		
 		//Function calls to toggle LEDs
 		//Write your logic here
+		lightHours(0);
 		
 		// Print out the time we have stored on our RTC
 		printf("The current time is: %x:%x:%x\n", hours, mins, secs);
@@ -106,7 +107,8 @@ int hFormat(int hours){
  * Turns on corresponding LED's for hours
  */
 void lightHours(int units){
-	// Write your logic to light up the hour LEDs here	
+	// Write your logic to light up the hour LEDs here
+		
 }
 
 /*
