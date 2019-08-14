@@ -42,7 +42,8 @@ void initGPIO(void){
 	
 	//Set Up the Seconds LED for PWM
 	//Write your logic here
-	softPwmCreate(SECS, 0, 100);
+	pinMode(SECS, PWM_OUTPUT);
+	//softPwmCreate(SECS, 0, 100);
 	
 	printf("LEDS done\n");
 	
@@ -80,7 +81,21 @@ int main(void){
 		
 		//Function calls to toggle LEDs
 		//Write your logic here
-		for(int i = 0; i<60; i++){
+		
+		//For testing sec
+		secPWM(100);
+		delay(1000);
+		for(int i = 0; i<61; i++){
+			delay(100);
+			secPWM(i);
+		}
+		//For testing hours
+		for(int i = 0; i<13; i++){
+			delay(1000);
+			lightHours(i);
+		}
+		//For testing mins
+		for(int i = 0; i<61; i++){
 			delay(100);
 			lightMins(i);
 		}
@@ -136,7 +151,7 @@ void lightMins(int units){
  * The LED should be "off" at 0 seconds, and fully bright at 59 seconds
  */
 void secPWM(int units){
-	// Write your logic here
+	pwmWrite(SECS, ((((float)units)/60)*100)) ;
 }
 
 /*

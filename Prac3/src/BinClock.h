@@ -29,7 +29,7 @@ const char TIMEZONE = 2; // +02H00 (RSA)
 // Sec: 33
 // BTN: 7, 11
 const int LEDS[] = {40, 38, 36, 37, 32, 22, 18, 16, 35, 31}; //H0-H4, M0-M5
-const int SECS = 33;
+const int SECS = 12;
 const int BTNS[] = {7, 11}; // B0, B1
 
 
