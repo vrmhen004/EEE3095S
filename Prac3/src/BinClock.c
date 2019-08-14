@@ -4,7 +4,7 @@
  * Modified for EEE3095S/3096S by Keegan Crankshaw
  * August 2019
  * 
- * <STUDNUM_1> <STUDNUM_2>
+ * VRMHEN004 <STUDNUM_2>
  * Date
 */
 
@@ -30,7 +30,7 @@ void initGPIO(void){
 	 * Note: wiringPi does not use GPIO or board pin numbers (unless specifically set to that mode)
 	 */
 	printf("Setting up\n");
-	wiringPiSetup(); //This is the default mode. If you want to change pinouts, be aware
+	wiringPiSetupPhys(); //This is the default mode. If you want to change pinouts, be aware
 	
 	RTC = wiringPiI2CSetup(RTCAddr); //Set up the RTC
 	
