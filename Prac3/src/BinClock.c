@@ -79,15 +79,14 @@ int main(void){
 	for (;;){
 		//Fetch the time from the RTC
 		//Write your logic here
-		hours = wiringPiI2CRead(HOUR);
-		mins = wiringPiI2CRead(MIN);
-		secs = wiringPiI2CRead(SEC);
+		hours = wiringPiI2CReadReg8(RTC, HOUR);
+		mins = wiringPiI2CReadReg8(RTC, MIN);
+		secs = wiringPiI2CReadReg8(RTC, SEC);
 		
 		//Function calls to toggle LEDs
 		//Write your logic here
 		lightHours(hours);
 		lightMins(mins);
-		printf("Secs: %d\n", secs);
 		secPWM(secs);
 		
 		/*For testing sec
