@@ -85,16 +85,16 @@ int main(void){
 	
 	//Set random time (3:04PM)
 	//Set hours to 12h clock and PM and random time
-	wiringPiI2CWriteReg8(RTC, HOUR, 0b01100011); //03
+	wiringPiI2CWriteReg8(RTC, HOUR, 0b01100000); //03
 	
 	//You can comment this file out later
 	//wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
-	wiringPiI2CWriteReg8(RTC, MIN, 0x4);
+	//wiringPiI2CWriteReg8(RTC, MIN, 0x4);
 	//wiringPiI2CWriteReg8(RTC, SEC, 0x00);*/
-	//toggleTime();
+	toggleTime();
 	
 	// Repeat this until we shut down
-	for (;;){
+	for (;;){		
 		//Fetch the time from the RTC
 		//Write your logic here
 		hours = convertFromRTCBCDHourstoInt(wiringPiI2CReadReg8(RTC, HOUR));
@@ -277,7 +277,7 @@ void minInc(void){
 void toggleTime(void){
 	long interruptTime = millis();
 
-	if (interruptTime - lastInterruptTime>200){
+	//if (interruptTime - lastInterruptTime>200){
 		HH = getHours();
 		MM = getMins();
 		SS = getSecs();
@@ -292,6 +292,7 @@ void toggleTime(void){
 		SS = decCompensation(SS);
 		wiringPiI2CWriteReg8(RTC, SEC, 0b10000000+SS);
 
-	}
+	//}
 	lastInterruptTime = interruptTime;
 }
+
