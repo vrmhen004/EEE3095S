@@ -63,7 +63,13 @@ void initGPIO(void){
 
 int convertFromRTCBCDtoInt(int bcd){
 	int firstDigit = bcd & 0b00001111;
-	int secondDigit = bcd & 0b01110000;
+	int secondDigit = (bcd & 0b01110000) >> 4;
+	return secondDigit*10 + firstDigit;
+}
+
+int convertFromRTCBCDHourstoInt(int bcd){
+	int firstDigit = bcd & 0b00001111;
+	int secondDigit = (bcd & 0b00010000) >> 4;
 	return secondDigit*10 + firstDigit;
 }
 
@@ -78,18 +84,21 @@ int main(void){
 	wiringPiI2CWriteReg8(RTC, SEC, 0b10000000);
 	
 	//Set random time (3:04PM)
+	//Set hours to 12h clock and PM and random time
+	wiringPiI2CWriteReg8(RTC, HOUR, 0b01100011); //03
+	
 	//You can comment this file out later
-	wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
+	//wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
 	wiringPiI2CWriteReg8(RTC, MIN, 0x4);
-	//wiringPiI2CWriteReg8(RTC, SEC, 0x00);
+	//wiringPiI2CWriteReg8(RTC, SEC, 0x00);*/
 	//toggleTime();
 	
 	// Repeat this until we shut down
 	for (;;){
 		//Fetch the time from the RTC
 		//Write your logic here
-		hours = wiringPiI2CReadReg8(RTC, HOUR);
-		mins = wiringPiI2CReadReg8(RTC, MIN);
+		hours = convertFromRTCBCDHourstoInt(wiringPiI2CReadReg8(RTC, HOUR));
+		mins = convertFromRTCBCDtoInt(wiringPiI2CReadReg8(RTC, MIN));
 		secs = convertFromRTCBCDtoInt(wiringPiI2CReadReg8(RTC, SEC));
 		
 		//Function calls to toggle LEDs
@@ -116,10 +125,8 @@ int main(void){
 			lightMins(i);
 		}*/
 		
-		//printf("The current time is: %d:%d:%d\n", hours, mins, secs);
-		
 		// Print out the time we have stored on our RTC
-		printf("The current time is: %x:%x:%x\n", hours, mins, secs);
+		printf("The current time is: %d:%d:%d\n", hours, mins, secs);
 
 		//using a delay to make our program "less CPU hungry"
 		delay(1000); //milliseconds
