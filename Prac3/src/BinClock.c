@@ -70,19 +70,26 @@ int main(void){
 
 	//Set random time (3:04PM)
 	//You can comment this file out later
-	wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
+	/*wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
 	wiringPiI2CWriteReg8(RTC, MIN, 0x4);
-	wiringPiI2CWriteReg8(RTC, SEC, 0x00);
+	wiringPiI2CWriteReg8(RTC, SEC, 0x00);*/
+	toggleTime();
 	
 	// Repeat this until we shut down
 	for (;;){
 		//Fetch the time from the RTC
 		//Write your logic here
+		hours = wiringPiI2CRead(0x13+TIMEZONE);
+		mins = wiringPiI2CRead(0x4);
+		secs = wiringPiI2CRead(0x00);
 		
 		//Function calls to toggle LEDs
 		//Write your logic here
+		lightHours(hours);
+		lightMins(mins);
+		secPWM(secs);
 		
-		//For testing sec
+		/*For testing sec
 		secPWM(100);
 		delay(1000);
 		for(int i = 0; i<61; i++){
@@ -98,7 +105,9 @@ int main(void){
 		for(int i = 0; i<61; i++){
 			delay(100);
 			lightMins(i);
-		}
+		}*/
+		
+		//printf("The current time is: %d:%d:%d\n", hours, mins, secs);
 		
 		// Print out the time we have stored on our RTC
 		printf("The current time is: %x:%x:%x\n", hours, mins, secs);
