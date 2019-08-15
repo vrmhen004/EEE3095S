@@ -61,6 +61,12 @@ void initGPIO(void){
 }
 
 
+int convertFromRTCBCDtoInt(int bcd){
+	int firstDigit = bcd & 0b00001111;
+	int secondDigit = bcd & 0b01110000;
+	return secondDigit*10 + firstDigit;
+}
+
 /*
  * The main function
  * This function is called, and calls all relevant functions we've written
@@ -68,11 +74,14 @@ void initGPIO(void){
 int main(void){
 	initGPIO();
 
+	//Enable oscilation
+	wiringPiI2CWriteReg8(RTC, SEC, 0b10000000);
+	
 	//Set random time (3:04PM)
 	//You can comment this file out later
 	wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
 	wiringPiI2CWriteReg8(RTC, MIN, 0x4);
-	wiringPiI2CWriteReg8(RTC, SEC, 0x00);
+	//wiringPiI2CWriteReg8(RTC, SEC, 0x00);
 	//toggleTime();
 	
 	// Repeat this until we shut down
@@ -81,7 +90,7 @@ int main(void){
 		//Write your logic here
 		hours = wiringPiI2CReadReg8(RTC, HOUR);
 		mins = wiringPiI2CReadReg8(RTC, MIN);
-		secs = wiringPiI2CReadReg8(RTC, SEC);
+		secs = convertFromRTCBCDtoInt(wiringPiI2CReadReg8(RTC, SEC));
 		
 		//Function calls to toggle LEDs
 		//Write your logic here
