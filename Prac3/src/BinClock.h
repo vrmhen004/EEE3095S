@@ -6,14 +6,23 @@
 
 // Function definitions
 int hFormat(int hours);
+
 void lightHours(int units);
+
 void lightMins(int units);
+
 int hexCompensation(int units);
+
 int decCompensation(int units);
+
 void initGPIO(void);
+
 void secPWM(int units);
+
 void hourInc(void);
+
 void minInc(void);
+
 void toggleTime(void);
 
 // define constants
@@ -28,9 +37,10 @@ const char TIMEZONE = 2; // +02H00 (RSA)
 // Min: 32, 22, 18, 16, 33, 31
 // Sec: 33
 // BTN: 7, 11
-const int LEDS[] = {40, 38, 36, 37, 32, 22, 18, 16, 33, 31}; //H0-H4, M0-M5
+const int LEDS[] = {40, 38, 36, 37, 32, 22, 18, 16, 33, 13}; //H0-H4, M0-M5
 const int SECS = 12;
-const int BTNS[] = {7, 11}; // B0, B1
+const int BTNS[] = {7, 29}; // B0, B1
 
+void cleanup();
 
 #endif
