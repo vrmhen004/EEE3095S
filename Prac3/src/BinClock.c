@@ -336,6 +336,7 @@ void toggleTime(void) {
     lastInterruptTime = interruptTime;
 }
 
+// cleanup function executed upon a keyboard interrupt
 void cleanup(int signal) {
 
     printf("Keyboard interrupt caught - exiting gracefully\n");
