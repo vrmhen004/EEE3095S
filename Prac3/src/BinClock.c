@@ -82,7 +82,7 @@ int convertFromRTCBCDHourstoInt(int bcd) {
  */
 int main(void) {
     initGPIO();
-    signal(SIGNAL, cleanup); //catch interrupts
+    signal(SIGINT, cleanup); //catch interrupts
 
     //Enable oscilation
     wiringPiI2CWriteReg8(RTC, SEC, 0b10000000);
