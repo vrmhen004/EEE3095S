@@ -19,7 +19,7 @@
 #include "CurrentTime.h"
 
 //Global variables
-int hours, mins, secs;
+int hours, mins, secs; //Stores time
 long lastInterruptTime = 0; //Used for button debounce
 int RTC; //Holds the RTC instance
 
@@ -32,7 +32,7 @@ void initGPIO(void) {
      * Note: wiringPi does not use GPIO or board pin numbers (unless specifically set to that mode)
      */
     printf("Setting up\n");
-    wiringPiSetupPhys(); //This is the default mode. If you want to change pinouts, be aware
+    wiringPiSetupPhys(); //This is the default mode. If you want to change pinouts, be aware - Changed to use physical pin numbers
 
     RTC = wiringPiI2CSetup(RTCAddr); //Set up the RTC
 
@@ -44,7 +44,6 @@ void initGPIO(void) {
     //Set Up the Seconds LED for PWM
     //Write your logic here
     pinMode(SECS, PWM_OUTPUT);
-    //softPwmCreate(SECS, 0, 100);
 
     printf("LEDS done\n");
 
@@ -63,17 +62,18 @@ void initGPIO(void) {
     printf("Setup done\n");
 }
 
-
+//Method used to convert data from RTC register, which is in BCD, to decimal.
 int convertFromRTCBCDtoInt(int bcd) {
-    int firstDigit = bcd & 0b00001111;
-    int secondDigit = (bcd & 0b01110000) >> 4;
-    return secondDigit * 10 + firstDigit;
+    int firstDigit = bcd & 0b00001111; //Get first digit
+    int secondDigit = (bcd & 0b01110000) >> 4; //Get second digit
+    return secondDigit * 10 + firstDigit; //Combine to decimal
 }
 
+//Method used to convert data from RTC register, which is in BCD, to decimal.
 int convertFromRTCBCDHourstoInt(int bcd) {
-    int firstDigit = bcd & 0b00001111;
-    int secondDigit = (bcd & 0b00010000) >> 4;
-    return secondDigit * 10 + firstDigit;
+    int firstDigit = bcd & 0b00001111; //Get first digit
+    int secondDigit = (bcd & 0b00010000) >> 4; //Get second digit
+    return secondDigit * 10 + firstDigit; //Combine to decimal
 }
 
 /*
@@ -92,9 +92,10 @@ int main(void) {
     wiringPiI2CWriteReg8(RTC, HOUR, 0b01100000); //03
 
     //You can comment this file out later
-    //wiringPiI2CWriteReg8(RTC, HOUR, 0x13+TIMEZONE);
-    //wiringPiI2CWriteReg8(RTC, MIN, 0x4);
-    //wiringPiI2CWriteReg8(RTC, SEC, 0x00);*/
+    /*wiringPiI2CWriteReg8(RTC, HOUR, ((0x13+TIMEZONE) & 0b01100000));
+    wiringPiI2CWriteReg8(RTC, MIN, 0x4);
+    wiringPiI2CWriteReg8(RTC, SEC, 0x00);*/
+    //Set correct time
     toggleTime();
 
     // Repeat this until we shut down
@@ -130,7 +131,7 @@ int main(void) {
         }*/
 
         // Print out the time we have stored on our RTC
-        printf("The current time is: %d:%d:%d\n", hours, mins, secs);
+        printf("The current time is: %d:%d:%d\n", hours, mins, secs); //Changed to decimal values to make easier to read
 
         //using a delay to make our program "less CPU hungry"
         delay(1000); //milliseconds
@@ -179,7 +180,7 @@ void lightMins(int units) {
  * The LED should be "off" at 0 seconds, and fully bright at 59 seconds
  */
 void secPWM(int units) {
-    pwmWrite(SECS, ((((float) units) / 60) * 100));
+    pwmWrite(SECS, ((((float) units) / 60) * 100)); //convert the seconds to a percentage and set PWM
 }
 
 /*

@@ -25,6 +25,12 @@ void minInc(void);
 
 void toggleTime(void);
 
+void cleanup();
+
+int convertFromRTCBCDtoInt(int bcd);
+
+int convertFromRTCBCDHourstoInt(int bcd);
+
 // define constants
 const char RTCAddr = 0x6f;
 const char SEC = 0x00; // see register table in datasheet
@@ -35,12 +41,10 @@ const char TIMEZONE = 2; // +02H00 (RSA)
 // define pins
 // Hours: 40, 38, 36, 37
 // Min: 32, 22, 18, 16, 33, 31
-// Sec: 33
-// BTN: 7, 11
+// Sec: 12
+// BTN: 7, 29
 const int LEDS[] = {40, 38, 36, 37, 32, 22, 18, 16, 33, 13}; //H0-H4, M0-M5
 const int SECS = 12;
 const int BTNS[] = {7, 29}; // B0, B1
-
-void cleanup();
 
 #endif
