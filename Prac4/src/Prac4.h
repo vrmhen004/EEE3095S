@@ -29,13 +29,13 @@
 #include <iostream>
 
 //Define buttons
-#define PLAY_BUTTON // Write your value here
-#define STOP_BUTTON // Write your value here
+#define PLAY_BUTTON 29// Write your value here
+#define STOP_BUTTON 31// Write your value here
 #define BUFFER_SIZE 1000
 
 //SPI Settings
-#define SPI_CHAN // Write your value here
-#define SPI_SPEED // Write your value here
+#define SPI_CHAN 0// Write your value here
+#define SPI_SPEED 20000000// Write your value here (SPI Interface with 20 MHz Clock Support)
 
 //Filename
 #define FILENAME "src/sound_16k_8bit.raw"

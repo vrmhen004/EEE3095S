@@ -20,6 +20,8 @@
 
 using namespace std;
 
+long lastInterruptTime = 0; //Used for button debounce
+
 bool playing = true; // should be set false when paused
 bool stopped = false; // If set to true, program should close
 unsigned char buffer[2][BUFFER_SIZE][2];
@@ -32,10 +34,34 @@ bool threadReady = false; //using this to finish writing the first column at the
 // Don't forget to use debouncing.
 void play_pause_isr(void){
     //Write your logis here
+    
+    //Debounce
+    long interruptTime = millis();
+    
+    if (interruptTime - lastInterruptTime > 200) {
+
+        printf("Play btn triggered \n");
+	playing = !playing;
+	
+    }
+
+    lastInterruptTime = interruptTime;
 }
 
 void stop_isr(void){
     // Write your logic here
+    
+    //Debounce
+    long interruptTime = millis();
+
+    if (interruptTime - lastInterruptTime > 200) {
+
+        printf("Stop btn triggered\n");
+	stopped = true;
+	
+    }
+
+    lastInterruptTime = interruptTime;
 }
 
 /*
@@ -43,11 +69,22 @@ void stop_isr(void){
  */
 int setup_gpio(void){
     //Set up wiring Pi
-    wiringPiSetup();
+    wiringPiSetupPhys();
+    
     //setting up the buttons
-	//TODO
+    
+    //setup mode and pin number
+    pinMode(PLAY_BUTTON, INPUT);
+    pullUpDnControl(PLAY_BUTTON, PUD_UP);
+    pinMode(STOP_BUTTON, INPUT);
+    pullUpDnControl(STOP_BUTTON, PUD_UP);
+    
+    //add interrupts
+    wiringPiISR(PLAY_BUTTON, INT_EDGE_FALLING, &play_pause_isr);
+    wiringPiISR(STOP_BUTTON, INT_EDGE_FALLING, &stop_isr);
+    
     //setting up the SPI interface
-    //TODO
+    wiringPiSPISetup(SPI_CHAN, SPI_SPEED) ;
     return 0;
 }
 
@@ -85,7 +122,7 @@ void *playThread(void *threadargs){
 
 int main(){
     // Call the setup GPIO function
-	if(setup_gpio()==-1){
+    if(setup_gpio()==-1){
         return 0;
     }
     
@@ -95,7 +132,7 @@ int main(){
      */ 
     
     //Write your logic here
-	pthread_attr_t tattr;
+    pthread_attr_t tattr;
     pthread_t thread_id;
     int newprio = 99;
     sched_param param;
@@ -135,15 +172,15 @@ int main(){
     int bufferWriting = 0;
 
     // Have a loop to read from the file
-	 while((ch = fgetc(filePointer)) != EOF){
+    while((ch = fgetc(filePointer)) != EOF){
         while(threadReady && bufferWriting==bufferReading && counter==0){
             //waits in here after it has written to a side, and the thread is still reading from the other side
             continue;
         }
         //Set config bits for first 8 bit packet and OR with upper bits
-        buffer[bufferWriting][counter][0] = ; //TODO
+        buffer[bufferWriting][counter][0] = 0; //TODO
         //Set next 8 bit packet
-        buffer[bufferWriting][counter][1] = ; //TODO
+        buffer[bufferWriting][counter][1] = 0; //TODO
 
         counter++;
         if(counter >= BUFFER_SIZE+1){
@@ -162,7 +199,7 @@ int main(){
     printf("Complete reading"); 
 	 
     //Join and exit the playthread
-	pthread_join(thread_id, NULL); 
+    pthread_join(thread_id, NULL); 
     pthread_exit(NULL);
 	
     return 0;
