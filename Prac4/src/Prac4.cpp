@@ -91,7 +91,9 @@ int setup_gpio(void){
     wiringPiISR(STOP_BUTTON, INT_EDGE_FALLING, &stop_isr);
     
     //setting up the SPI interface
-    wiringPiSPISetup(SPI_CHAN, SPI_SPEED) ;
+    if(wiringPiSPISetup(SPI_CHAN, SPI_SPEED) == -1){
+    	return -1;
+    }
     return 0;
 }
 
@@ -123,10 +125,7 @@ void *playThread(void *threadargs){
 	}
         
         //Write the buffer out to SPI
-        //write first byte (write command with 4 bits of data)
-        wiringPiSPIDataRW(SPI_CHAN, &buffer[bufferReading][buffer_location][0], 8) ;
-        //write second byte (last 4 bits of data)
-        wiringPiSPIDataRW(SPI_CHAN, &buffer[bufferReading][buffer_location][1], 8) ;
+        wiringPiSPIDataRW(SPI_CHAN, buffer[bufferReading][buffer_location], 2) ;
 		
         //Do some maths to check if you need to toggle buffers
         buffer_location++;
