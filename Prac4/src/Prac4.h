@@ -34,8 +34,11 @@
 #define BUFFER_SIZE 1000
 
 //SPI Settings
+#define SAMPLERATE 16000000 //16k
+#define WIDTH 8 //bit
+#define NO_CHANNELS 1 //?
 #define SPI_CHAN 0// Write your value here
-#define SPI_SPEED 20000000// Write your value here (SPI Interface with 20 MHz Clock Support)
+#define SPI_SPEED SAMPLERATE*WIDTH*NO_CHANNELS*8/5 // Write your value here
 
 //Filename
 #define FILENAME "src/sound_16k_8bit.raw"

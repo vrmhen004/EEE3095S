@@ -20,15 +20,18 @@
 
 using namespace std;
 
-long lastInterruptTime = 0; //Used for button debounce
+//changed to volatile for more thread concurrency
 
-bool playing = true; // should be set false when paused
-bool stopped = false; // If set to true, program should close
+volatile long lastInterruptTime = 0; //Used for button debounce
+
+volatile bool playing = true; // should be set false when paused
+volatile bool stopped = false; // If set to true, program should close
 unsigned char buffer[2][BUFFER_SIZE][2];
-int buffer_location = 0;
-bool bufferReading = 0; //using this to switch between column 0 and 1 - the first column
-bool threadReady = false; //using this to finish writing the first column at the start of the song, before the column is played
+volatile int buffer_location = 0;
+volatile bool bufferReading = 0; //using this to switch between column 0 and 1 - the first column
+volatile bool threadReady = false; //using this to finish writing the first column at the start of the song, before the column is played
 
+int writeCommand = 0b01110000;
 
 // Configure your interrupts here.
 // Don't forget to use debouncing.
@@ -39,8 +42,12 @@ void play_pause_isr(void){
     long interruptTime = millis();
     
     if (interruptTime - lastInterruptTime > 200) {
-
-        printf("Play btn triggered \n");
+    
+        if(playing){
+        	printf("Paused\n");
+        } else {
+        	printf("Resuming\n");
+        }
 	playing = !playing;
 	
     }
@@ -56,7 +63,7 @@ void stop_isr(void){
 
     if (interruptTime - lastInterruptTime > 200) {
 
-        printf("Stop btn triggered\n");
+        printf("Stopped\n");
 	stopped = true;
 	
     }
@@ -104,10 +111,22 @@ void *playThread(void *threadargs){
     //You need to only be playing if the stopped flag is false
     while(!stopped){
         //Code to suspend playing if paused
-		//TODO
+	//TODO
+	while(!playing){
+		//wait until unpaused		
+		continue;
+	}
+	
+	//if stopped while paused stop
+	if(stopped){
+		break;
+	}
         
         //Write the buffer out to SPI
-        //TODO
+        //write first byte (write command with 4 bits of data)
+        wiringPiSPIDataRW(SPI_CHAN, &buffer[bufferReading][buffer_location][0], 8) ;
+        //write second byte (last 4 bits of data)
+        wiringPiSPIDataRW(SPI_CHAN, &buffer[bufferReading][buffer_location][1], 8) ;
 		
         //Do some maths to check if you need to toggle buffers
         buffer_location++;
@@ -116,8 +135,12 @@ void *playThread(void *threadargs){
             bufferReading = !bufferReading; // switches column one it finishes one column
         }
     }
+    threadReady = false;
+    
+    printf("Play thread exited\n");
     
     pthread_exit(NULL);
+    
 }
 
 int main(){
@@ -177,14 +200,22 @@ int main(){
             //waits in here after it has written to a side, and the thread is still reading from the other side
             continue;
         }
+        
+        if(stopped){
+        	printf("Stopped reading\n");
+        	break; //TODO is this fine? Should program stop if stopped pressed?
+        }
+        
+        char data = fgetc(filePointer);
+        
         //Set config bits for first 8 bit packet and OR with upper bits
-        buffer[bufferWriting][counter][0] = 0; //TODO
+        buffer[bufferWriting][counter][0] = writeCommand || (data >> 4); 
         //Set next 8 bit packet
-        buffer[bufferWriting][counter][1] = 0; //TODO
+        buffer[bufferWriting][counter][1] = (data << 4); 
 
         counter++;
         if(counter >= BUFFER_SIZE+1){
-            if(!threadReady){
+            if(!threadReady){ 
                 threadReady = true;
             }
 
@@ -196,11 +227,15 @@ int main(){
      
     // Close the file
     fclose(filePointer);
-    printf("Complete reading"); 
+    printf("Complete reading\n"); 
 	 
     //Join and exit the playthread
+    printf("Waiting on playing thread\n"); 
     pthread_join(thread_id, NULL); 
-    pthread_exit(NULL);
+    
+    printf("Exiting\n"); 
+    
+    //pthread_exit(NULL); - this doesn't stop program so removed it
 	
     return 0;
 }
