@@ -202,7 +202,7 @@ int main(){
         char data = fgetc(filePointer);
         
         //Set config bits for first 8 bit packet and OR with upper bits
-        buffer[bufferWriting][counter][0] = writeCommand || (data >> 4); 
+        buffer[bufferWriting][counter][0] = (writeCommand || (data >> 4)); 
         //Set next 8 bit packet
         buffer[bufferWriting][counter][1] = (data << 4); 
 

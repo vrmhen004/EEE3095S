@@ -34,7 +34,7 @@
 #define BUFFER_SIZE 1000
 
 //SPI Settings
-#define SAMPLERATE 16000000 //16k
+#define SAMPLERATE 16000 //16k
 #define WIDTH 8 //bit
 #define NO_CHANNELS 1 //?
 #define SPI_CHAN 0// Write your value here
