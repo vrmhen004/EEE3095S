@@ -31,7 +31,7 @@ volatile int buffer_location = 0;
 volatile bool bufferReading = 0; //using this to switch between column 0 and 1 - the first column
 volatile bool threadReady = false; //using this to finish writing the first column at the start of the song, before the column is played
 
-int writeCommand = 0b01110000;
+char writeCommand = 0b00110000;
 
 // Configure your interrupts here.
 // Don't forget to use debouncing.
@@ -119,7 +119,7 @@ void *playThread(void *threadargs){
 	}	
         
         //Write the buffer out to SPI
-        wiringPiSPIDataRW(SPI_CHAN, buffer[bufferReading][buffer_location], 2) ;
+        wiringPiSPIDataRW(SPI_CHAN, buffer[bufferReading][buffer_location], 2);
 		
         //Do some maths to check if you need to toggle buffers
         buffer_location++;
@@ -195,16 +195,16 @@ int main(){
         }
         
         if(stopped){
-        	printf("Stopped reading\n");
-        	break; //TODO is this fine? Should program stop if stopped pressed?
+        	break;
         }
         
         char data = fgetc(filePointer);
+        data = 0;
         
         //Set config bits for first 8 bit packet and OR with upper bits
-        buffer[bufferWriting][counter][0] = (writeCommand || (data >> 4)); 
+        buffer[bufferWriting][counter][0] = (writeCommand | (data >> 6)); 
         //Set next 8 bit packet
-        buffer[bufferWriting][counter][1] = (data << 4); 
+        buffer[bufferWriting][counter][1] = (data << 2); 
 
         counter++;
         if(counter >= BUFFER_SIZE+1){
