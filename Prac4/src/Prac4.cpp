@@ -199,7 +199,6 @@ int main(){
         }
         
         char data = fgetc(filePointer);
-        data = 0;
         
         //Set config bits for first 8 bit packet and OR with upper bits
         buffer[bufferWriting][counter][0] = (writeCommand | (data >> 6)); 
