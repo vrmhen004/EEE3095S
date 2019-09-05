@@ -113,16 +113,10 @@ void *playThread(void *threadargs){
     //You need to only be playing if the stopped flag is false
     while(!stopped){
         //Code to suspend playing if paused
-	//TODO
-	while(!playing){
+	if(!playing){
 		//wait until unpaused		
 		continue;
-	}
-	
-	//if stopped while paused stop
-	if(stopped){
-		break;
-	}
+	}	
         
         //Write the buffer out to SPI
         wiringPiSPIDataRW(SPI_CHAN, buffer[bufferReading][buffer_location], 2) ;
