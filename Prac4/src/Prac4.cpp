@@ -31,7 +31,7 @@ volatile int buffer_location = 0;
 volatile bool bufferReading = 0; //using this to switch between column 0 and 1 - the first column
 volatile bool threadReady = false; //using this to finish writing the first column at the start of the song, before the column is played
 
-char writeCommand = 0b00110000;
+char writeCommand = 0b00010000;
 
 // Configure your interrupts here.
 // Don't forget to use debouncing.
@@ -198,12 +198,16 @@ int main(){
         	break;
         }
         
-        char data = fgetc(filePointer);
+        unsigned char data = fgetc(filePointer);
+        //printf("Write %d\n", data);
         
         //Set config bits for first 8 bit packet and OR with upper bits
+       // printf("Data %d\n", data);
         buffer[bufferWriting][counter][0] = (writeCommand | (data >> 6)); 
+       // printf("MSB %d\n", buffer[bufferWriting][counter][1]);
         //Set next 8 bit packet
         buffer[bufferWriting][counter][1] = (data << 2); 
+       // printf("LSB %d\n", buffer[bufferWriting][counter][1]);
 
         counter++;
         if(counter >= BUFFER_SIZE+1){
