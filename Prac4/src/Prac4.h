@@ -42,7 +42,7 @@
 
 #define STOP_BUTTON 31 // Write your value here
 
-const int BUFFER_SIZE = 500;
+const int BUFFER_SIZE = 1000;
 
 //SPI Settings
 #define SPI_CHAN 0 // Write your value here

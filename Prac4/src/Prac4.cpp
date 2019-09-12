@@ -22,9 +22,9 @@ using namespace std;
 
 long lastInterruptTime = 0; // used for button debounce
 
-bool playing = true;
+volatile bool playing = true;
 
-bool stopped = false;
+volatile bool stopped = false;
 
 unsigned char buffer[2][BUFFER_SIZE][2];
 
@@ -145,6 +145,8 @@ int setup_gpio(void) {
 
 PI_THREAD (play_audio) {
 
+	piHiPri(99);
+
 	while(!threadReady) {
 
 		delay(1);
@@ -237,12 +239,13 @@ int main() {
 
 	char config = 0 * 0x40 + 1 * 0x20 + 1 * 0x10;
 
+	printf("spi speed %d\n", SPI_SPEED);
 	printf("\nPlaying song >>>\n");
 
 	// Have a loop to read from the file
-	while ((ch = fgetc(filePointer)) != EOF) {
+	while ((ch = fgetc(filePointer)) != EOF && !stopped) {
 
-		while (threadReady && (bufferWriting == bufferReading) && (counter == 0)) {
+		while (threadReady && (bufferWriting == bufferReading) && (counter == 0) && !stopped) {
 
 			delay(1);
 
@@ -279,7 +282,11 @@ int main() {
 
 	fclose(filePointer); // Close the file
 
-	printf("Reading done.");
+	printf("Reading done.\n");
+	
+	printf("Turn off dac.\n");
+	unsigned char data[2] = {0,0};
+	wiringPiSPIDataRW(SPI_CHAN, data, 2);
 
 	return 0;
 }
