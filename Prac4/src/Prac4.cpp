@@ -110,16 +110,26 @@ void *playThread(void *threadargs){
     while(!threadReady)
         continue;
     
+    unsigned char data[2]; // for testing
+    unsigned char d = 0; // for testing
+    
     //You need to only be playing if the stopped flag is false
     while(!stopped){
+    	d++; // for testing
         //Code to suspend playing if paused
 	if(!playing){
 		//wait until unpaused		
 		continue;
 	}	
         
+        /* TEST 
+        data[0] = (writeCommand | (d >> 6)); 
+        data[1] = (d << 2); 
+        wiringPiSPIDataRW(SPI_CHAN, data, 2);
+         TEST */
+        
         //Write the buffer out to SPI
-        wiringPiSPIDataRW(SPI_CHAN, buffer[bufferReading][buffer_location], 2);
+       // wiringPiSPIDataRW(SPI_CHAN, buffer[bufferReading][buffer_location], 2);
 		
         //Do some maths to check if you need to toggle buffers
         buffer_location++;
@@ -228,6 +238,10 @@ int main(){
     //Join and exit the playthread
     printf("Waiting on playing thread\n"); 
     pthread_join(thread_id, NULL); 
+    
+    printf("Turning off DAC\n");
+    unsigned char data[2] = {0,0};
+    wiringPiSPIDataRW(SPI_CHAN, data, 2);
     
     printf("Exiting\n"); 
     
